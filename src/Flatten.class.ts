@@ -1,20 +1,20 @@
-class FlattenerClass {
-
+export class FlattenerClass {
   /**
-   * Description - Flatten an object
-   * @param {any} obj
-   * @param {any} prefix=""
-   * @returns {any}
+   * Create a Flatten Class from obj input parameter
+   * @date 2023-03-10
+   * @param {Object} obj:Object - The input Object
+   * @param {string} prefix="" - Optional: use it if you want a prefix
+   * @returns {Object}
    */
-  static flatten(obj, prefix = "") {
-    const flattenedObject = {};
+  static flatten(obj: Object, prefix = '') {
+    const flattenedObject: any = {};
     for (const key in obj) {
       if (obj.hasOwnProperty(key)) {
         const value = obj[key];
         const newKey = prefix ? `${prefix}.${key}` : key;
         if (Array.isArray(value)) {
           FlattenerClass.flattenArray(value, newKey, flattenedObject);
-        } else if (typeof value === "object" && value !== null) {
+        } else if (typeof value === 'object' && value !== null) {
           Object.assign(flattenedObject, FlattenerClass.flatten(value, newKey));
         } else {
           flattenedObject[newKey] = value;
@@ -24,20 +24,13 @@ class FlattenerClass {
     return flattenedObject;
   }
 
-  /**
-   * Description - Flatten an array
-   * @param {any} arr
-   * @param {any} prefix
-   * @param {any} flattenedObject
-   * @returns {any}
-   */
-  static flattenArray(arr, prefix, flattenedObject) {
+  private static flattenArray(arr: any[], prefix: string, flattenedObject: any) {
     for (let i = 0; i < arr.length; i++) {
       const value = arr[i];
       const newKey = `${prefix}[${i}]`;
       if (Array.isArray(value)) {
         FlattenerClass.flattenArray(value, newKey, flattenedObject);
-      } else if (typeof value === "object" && value !== null) {
+      } else if (typeof value === 'object' && value !== null) {
         Object.assign(flattenedObject, FlattenerClass.flatten(value, newKey));
       } else {
         flattenedObject[newKey] = value;
@@ -45,23 +38,18 @@ class FlattenerClass {
     }
   }
 
-  /**
-   * Description - Unflatten an object
-   * @param {any} flattenedObj
-   * @returns {any}
-   */
-  static unflatten(flattenedObj) {
-    const result = {};
+  static unflatten(flattenedObj: Record<string, unknown>): Record<string, unknown> {
+    const result: Record<string, unknown> = {};
 
     for (const key in flattenedObj) {
-      const keys = key.split(".");
+      const keys = key.split('.');
       let currentObj = result;
       let arrayIndex;
 
       for (let i = 0; i < keys.length; i++) {
         const k = keys[i];
 
-        if (k.includes("[")) {
+        if (k.includes('[')) {
           const match = k.match(/^(.*)\[(\d+)\]$/);
           if (match) {
             const arrayKey = match[1];
@@ -72,7 +60,7 @@ class FlattenerClass {
             if (!currentObj[arrayKey][arrayIndex]) {
               currentObj[arrayKey][arrayIndex] = {};
             }
-            currentObj = currentObj[arrayKey][arrayIndex];
+            currentObj = currentObj[arrayKey][arrayIndex] as Record<string, unknown>;
           }
         } else {
           if (i === keys.length - 1) {
@@ -81,7 +69,7 @@ class FlattenerClass {
             if (!currentObj[k]) {
               currentObj[k] = {};
             }
-            currentObj = currentObj[k];
+            currentObj = currentObj[k] as Record<string, unknown>;
           }
         }
       }
@@ -90,5 +78,3 @@ class FlattenerClass {
     return result;
   }
 }
-
-module.exports = FlattenerClass;
