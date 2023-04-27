@@ -25,6 +25,13 @@ export class FlattenerClass {
   }
 
   private static flattenArray(arr: any[], prefix: string, flattenedObject: any) {
+    if (arr.length > 0) {
+      if (arr[0].hasOwnProperty('Id') || arr[0].hasOwnProperty('id')) {
+        arr.sort(function (a, b) {
+          return a.hasOwnProperty('Id') ? a.Id - b.Id : a.id - b.id;
+        });
+      }
+    }
     for (let i = 0; i < arr.length; i++) {
       const value = arr[i];
       const newKey = `${prefix}[${i}]`;

@@ -229,4 +229,41 @@ describe('FlattenClass', () => {
 
     expect(result).toEqual(expected);
   });
+
+  it('should order an array by Id', () => {
+    const obj = {
+      test: [
+        { Id: 7, name: 'Mario' },
+        { Id: 8, name: 'Paolo' },
+        { Id: 6, name: 'Luca' },
+        { Id: 2, name: 'Giovanni' },
+        { Id: 1, name: 'Giuseppe' },
+        { Id: 4, name: 'Giacomo' },
+        { Id: 3, name: 'Gianluca' },
+        { Id: 5, name: 'Gianmarco' },
+      ],
+    };
+    const expected = {
+      'test[0].Id': 1,
+      'test[0].name': 'Giuseppe',
+      'test[1].Id': 2,
+      'test[1].name': 'Giovanni',
+      'test[2].Id': 3,
+      'test[2].name': 'Gianluca',
+      'test[3].Id': 4,
+      'test[3].name': 'Giacomo',
+      'test[4].Id': 5,
+      'test[4].name': 'Gianmarco',
+      'test[5].Id': 6,
+      'test[5].name': 'Luca',
+      'test[6].Id': 7,
+      'test[6].name': 'Mario',
+      'test[7].Id': 8,
+      'test[7].name': 'Paolo',
+    };
+
+    const result = FlattenerClass.flatten(obj);
+
+    expect(result).toEqual(expected);
+  });
 });

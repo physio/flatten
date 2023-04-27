@@ -1,5 +1,3 @@
-import { SearcherRepositoryInterface } from './interfaces/SearcherRepository.interface';
-import _ from 'lodash';
 import { FlattenerClass } from './Flatten.class';
 
 export class Searcher {
