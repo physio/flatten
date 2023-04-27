@@ -1,0 +1,29 @@
+{
+  "name": "flatten",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "dependencies": {
+    "jest": "^29.5.0",
+    "lodash": "^4.17.21"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "jest": {
+    "verbose": true,
+    "testMatch": [
+      "**/*.(spec|test).js"
+    ]
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/physio/flatten.git"
+  },
+  "author": "mauro.gallo@mentel.it",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/physio/flatten/issues"
+  },
+  "homepage": "https://github.com/physio/flatten#readme"
+}
