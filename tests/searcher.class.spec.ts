@@ -118,6 +118,47 @@ describe('SearchClass', () => {
     expect(searcher.search('hobbies[1].secondTest[1]')).toEqual(secondResult);
   });
 
+  it('Should return a object filtered with a * char with a numeric Id', () => {
+    const obj = {
+      name: 'Mario',
+      hobbies: [
+        {
+          name: 'reading',
+          test: [
+            {
+              Id: 2,
+              name: 'test',
+            },
+            {
+              Id: 1,
+              name: 'test',
+            },
+            {
+              Id: 4,
+              name: 'test',
+            },
+            {
+              Id: 3,
+              name: 'test',
+            },
+          ],
+        },
+        {
+          name: 'cooking',
+          secondTest: ['mario', 'Ross'],
+        },
+      ],
+    };
+    const result = {
+      Id: 2,
+      name: 'test',
+    };
+
+    const searcher = new Searcher();
+    searcher.populate(obj);
+    expect(searcher.search('hobbies[*].Id.2')).toEqual(result);
+  });
+
   it('Should return the empty repository', () => {
     const obj = {
       name: 'Mario',

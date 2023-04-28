@@ -1,3 +1,4 @@
+import { BinarySearcherClass } from './BinarySearcher.class';
 import { FlattenerClass } from './Flatten.class';
 
 export class Searcher {
@@ -18,18 +19,16 @@ export class Searcher {
    * @returns {any}
    */
   public search(searchTerm: string): Object[] {
+    if (searchTerm.includes('*')) {
+      // Todo: implement a binary search
+      const id = searchTerm.split('*')[1];
+      BinarySearcherClass.searchBy(id, searchTerm, this.repository);
+    }
     if (this.repository.hasOwnProperty(searchTerm)) {
       return this.repository[searchTerm];
     } else {
       throw new Error('search term not found.');
     }
-    /*
-    const filteredCollection = _.filter(this.repository, (item: string) => {
-      const values = _.flatMapDeep(item, (value) => (_.isArray(value) ? value : [value]));
-      return _.some(values, (value) => _.includes(_.toLower(value), _.toLower(searchTerm)));
-    });
-
-    return filteredCollection;*/
   }
 
   /**
