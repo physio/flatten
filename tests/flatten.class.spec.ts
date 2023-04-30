@@ -1,269 +1,262 @@
-import { FlattenerClass } from '../src/Flatten.class';
+import { Flatten } from '../src/Flatten.class';
 
-describe('FlattenClass', () => {
-  it('should flatten a simple object', () => {
+describe('SearchClass', () => {
+  it('Should populate the repository', () => {
     const obj = {
-      name: 'Alice',
-      age: 30,
-    };
-    const flattenedObj = FlattenerClass.flatten(obj);
-    expect(flattenedObj).toEqual({
-      name: 'Alice',
-      age: 30,
-    });
-  });
-
-  it('should flatten an object with nested objects', () => {
-    const obj = {
-      name: 'Alice',
+      name: 'Mario',
+      surname: 'Rossi',
       age: 30,
       address: {
         city: 'Modena',
         state: 'IT',
       },
     };
-    const flattenedObj = FlattenerClass.flatten(obj);
-    expect(flattenedObj).toEqual({
-      name: 'Alice',
+
+    const objTest = new Flatten();
+    const aspect = {
+      name: 'Mario',
+      surname: 'Rossi',
       age: 30,
       'address.city': 'Modena',
       'address.state': 'IT',
-    });
-  });
-
-  it('should flatten an object with arrays', () => {
-    const obj = {
-      name: 'Alice',
-      age: 30,
-      hobbies: ['reading', 'cooking'],
     };
-    const flattenedObj = FlattenerClass.flatten(obj);
-    expect(flattenedObj).toEqual({
-      name: 'Alice',
-      age: 30,
-      'hobbies[0]': 'reading',
-      'hobbies[1]': 'cooking',
-    });
+    objTest.populate(obj);
+    expect(objTest.getCollection()).toEqual(aspect);
   });
 
-  it('should flatten an object with nested arrays', () => {
+  it('Should return the property of an object without array', () => {
     const obj = {
-      name: 'Alice',
-      age: 30,
-      friends: [
-        {
-          name: 'Mario',
-          age: 35,
-        },
-        {
-          name: 'Paolo',
-          age: 40,
-        },
-      ],
-    };
-    const flattenedObj = FlattenerClass.flatten(obj);
-    expect(flattenedObj).toEqual({
-      name: 'Alice',
-      age: 30,
-      'friends[0].name': 'Mario',
-      'friends[0].age': 35,
-      'friends[1].name': 'Paolo',
-      'friends[1].age': 40,
-    });
-  });
-
-  it('should flatten an object with null and undefined values', () => {
-    const obj = {
-      name: 'Alice',
-      age: null,
-      address: {
-        city: 'Modena',
-        state: undefined,
-      },
-    };
-    const flattenedObj = FlattenerClass.flatten(obj);
-    expect(flattenedObj).toEqual({
-      name: 'Alice',
-      age: null,
-      'address.city': 'Modena',
-    });
-  });
-
-  it('should flatten an object with empty arrays and objects', () => {
-    const obj = {
-      name: 'Alice',
-      age: 30,
-      emptyArray: [],
-      emptyObject: {},
-    };
-    const flattenedObj = FlattenerClass.flatten(obj);
-    expect(flattenedObj).toEqual({
-      name: 'Alice',
-      age: 30,
-    });
-  });
-
-  test('should flatten an object', () => {
-    const obj = {
-      name: 'Alice',
+      name: 'Mario',
+      surname: 'Rossi',
       age: 30,
       address: {
         city: 'Modena',
         state: 'IT',
       },
-      hobbies: ['reading', 'cooking'],
-      friends: [
-        {
-          name: 'Mario',
-          age: 35,
-        },
-        {
-          name: 'Paolo',
-          age: 40,
-          address: {
-            city: 'Verona',
-            state: 'IT',
-          },
-        },
-      ],
     };
+    const aspectAge = 30;
+    const aspectCity = 'Modena';
 
-    const result = {
-      name: 'Alice',
-      age: 30,
-      'address.city': 'Modena',
-      'address.state': 'IT',
-      'hobbies[0]': 'reading',
-      'hobbies[1]': 'cooking',
-      'friends[0].name': 'Mario',
-      'friends[0].age': 35,
-      'friends[1].name': 'Paolo',
-      'friends[1].age': 40,
-      'friends[1].address.city': 'Verona',
-      'friends[1].address.state': 'IT',
-    };
-
-    expect(FlattenerClass.flatten(obj)).toEqual(result);
+    const objTest = new Flatten();
+    objTest.populate(obj);
+    expect(objTest.getValue('age')).toEqual(aspectAge);
+    expect(objTest.getValue('address.city')).toEqual(aspectCity);
   });
 
-  it('should flatten an object with 10 levels of nesting', () => {
-    // Create a nested object with 10 levels of nesting
-    const nestedObject = {};
-    let currentNode = nestedObject;
-    for (let i = 0; i < 10; i++) {
-      currentNode['prop'] = {};
-      currentNode = currentNode['prop'];
-    }
-    currentNode['leaf'] = 'value';
-
-    // Flatten the object and check the result
-    const flattenedObject = FlattenerClass.flatten(nestedObject);
-    expect(flattenedObject).toEqual({
-      'prop.prop.prop.prop.prop.prop.prop.prop.prop.prop.leaf': 'value',
-    });
-  });
-
-  it('should correctly unflatten a simple object', () => {
-    const flatObject = { 'name.first': 'Mario', 'name.last': 'Rossi', age: 30 };
-    const expected = { name: { first: 'Mario', last: 'Rossi' }, age: 30 };
-
-    const result = FlattenerClass.unflatten(flatObject);
-
-    expect(result).toEqual(expected);
-  });
-
-  it('should correctly unflatten an object with nested properties', () => {
-    const flatObject = {
-      'user.name.first': 'John',
-      'user.name.last': 'Doe',
-      'user.address.street': '123 Main St',
-      'user.address.city': 'Anytown',
-      'user.address.state': 'CA',
-      'user.address.zip': '12345',
-    };
-    const expected = {
-      user: {
-        name: { first: 'John', last: 'Doe' },
-        address: {
-          street: '123 Main St',
-          city: 'Anytown',
-          state: 'CA',
-          zip: '12345',
-        },
-      },
-    };
-
-    const result = FlattenerClass.unflatten(flatObject);
-
-    expect(result).toEqual(expected);
-  });
-
-  it('should correctly unflatten an object with empty string keys', () => {
-    const flatObject = {
-      '': 'empty',
-      'name.first': 'John',
-      'name.last': 'Doe',
-    };
-    const expected = { '': 'empty', name: { first: 'John', last: 'Doe' } };
-
-    const result = FlattenerClass.unflatten(flatObject);
-
-    expect(result).toEqual(expected);
-  });
-
-  it('should correctly unflatten an object with array indexes', () => {
-    const flatObject = {
-      'users[0].first': 'John',
-      'users[0].last': 'Doe',
-      'users[1].first': 'Jane',
-      'users[1].last': 'Doe',
-    };
-    const expected = {
-      users: [
-        { first: 'John', last: 'Doe' },
-        { first: 'Jane', last: 'Doe' },
-      ],
-    };
-
-    const result = FlattenerClass.unflatten(flatObject);
-
-    expect(result).toEqual(expected);
-  });
-
-  it('should order an array by Id', () => {
+  it('Should return the property of an object with array', () => {
     const obj = {
-      test: [
-        { Id: 7, name: 'Mario' },
-        { Id: 8, name: 'Paolo' },
-        { Id: 6, name: 'Luca' },
-        { Id: 2, name: 'Giovanni' },
-        { Id: 1, name: 'Giuseppe' },
-        { Id: 4, name: 'Giacomo' },
-        { Id: 3, name: 'Gianluca' },
-        { Id: 5, name: 'Gianmarco' },
+      name: 'Mario',
+      surname: 'Rossi',
+      hobbies: ['reading', 'cooking'],
+    };
+    const aspectReading = 'reading';
+    const aspectCooking = 'cooking';
+
+    const objTest = new Flatten();
+    objTest.populate(obj);
+    expect(objTest.getValue('hobbies.0')).toEqual(aspectReading);
+    expect(objTest.getValue('hobbies.1')).toEqual(aspectCooking);
+  });
+
+  it('Should return the property of an array', () => {
+    const obj = ['reading', 'cooking'];
+    const aspectReading = 'reading';
+    const aspectCooking = 'cooking';
+
+    expect(() => {
+      const objTest = new Flatten();
+      objTest.populate(obj);
+      objTest.getValue('[0]');
+    }).toThrow('search term not found.');
+  });
+
+  it('Should return the property of an object with array', () => {
+    const obj = {
+      name: 'Mario',
+      hobbies: [
+        {
+          name: 'reading',
+        },
+        {
+          name: 'cooking',
+        },
       ],
     };
-    const expected = {
-      'test[0].Id': 1,
-      'test[0].name': 'Giuseppe',
-      'test[1].Id': 2,
-      'test[1].name': 'Giovanni',
-      'test[2].Id': 3,
-      'test[2].name': 'Gianluca',
-      'test[3].Id': 4,
-      'test[3].name': 'Giacomo',
-      'test[4].Id': 5,
-      'test[4].name': 'Gianmarco',
-      'test[5].Id': 6,
-      'test[5].name': 'Luca',
-      'test[6].Id': 7,
-      'test[6].name': 'Mario',
-      'test[7].Id': 8,
-      'test[7].name': 'Paolo',
+    const aspectReading = 'reading';
+    const aspectCooking = 'cooking';
+
+    const objTest = new Flatten();
+    objTest.populate(obj);
+    expect(objTest.getValue('hobbies.0.name')).toEqual(aspectReading);
+    expect(objTest.getValue('hobbies.1.name')).toEqual(aspectCooking);
+  });
+
+  it('Should return the property of an object with array', () => {
+    const obj = {
+      name: 'Mario',
+      hobbies: [
+        {
+          name: 'reading',
+          test: [
+            {
+              name: 'test',
+            },
+          ],
+        },
+        {
+          name: 'cooking',
+          secondTest: ['mario', 'Ross'],
+        },
+      ],
     };
+    const firstResult = 'test';
+    const secondResult = 'Ross';
 
-    const result = FlattenerClass.flatten(obj);
+    const objTest = new Flatten();
+    objTest.populate(obj);
+    expect(objTest.getValue('hobbies.0.test.0.name')).toEqual(firstResult);
+    expect(objTest.getValue('hobbies.1.secondTest.1')).toEqual(secondResult);
+  });
 
-    expect(result).toEqual(expected);
+  it('Should return the index filtered with a * char with a numeric Id', () => {
+    const obj = {
+      name: 'Mario',
+      hobbies: [
+        {
+          name: 'reading',
+          test: [
+            {
+              Id: 2,
+              name: 'test',
+            },
+            {
+              Id: 6,
+              name: 'test',
+            },
+            {
+              Id: 11,
+              name: 'test',
+            },
+            {
+              Id: 44,
+              name: 'test',
+            },
+            {
+              Id: 13,
+              name: 'test',
+            },
+          ],
+        },
+        {
+          name: 'cooking',
+          secondTest: ['mario', 'Rossi'],
+        },
+      ],
+    };
+    const result = 1;
+
+    const objTest = new Flatten();
+    objTest.populate(obj);
+    expect(objTest.getIndex('hobbies.0.test.*.Id.6')).toEqual(result);
+  });
+
+  it('Should return the empty repository', () => {
+    const obj = {};
+    const aspect = {};
+    let flatten = new Flatten();
+    flatten.populate([]);
+    expect(flatten.getCollection()).toEqual(aspect);
+  });
+
+  it('Should return -1 because there is not the value with getIndexByProperty method', () => {
+    const obj = {
+      name: 'Mario',
+      hobbies: [
+        {
+          name: 'reading',
+          test: [
+            {
+              Id: 2,
+              name: 'test',
+            },
+            {
+              Id: 6,
+              name: 'test',
+            },
+            {
+              Id: 11,
+              name: 'test',
+            },
+            {
+              Id: 44,
+              name: 'test',
+            },
+            {
+              Id: 13,
+              name: 'test',
+            },
+          ],
+        },
+        {
+          name: 'cooking',
+          secondTest: ['mario', 'Rossi'],
+        },
+      ],
+    };
+    const result = -1;
+
+    const objTest = new Flatten();
+    objTest.populate(obj);
+    expect(objTest.getIndexByProperty('hobbies.0.test', 'Id', 1116)).toEqual(result);
+  });
+
+  it('Should return the index with getIndexByProperty method', () => {
+    const obj = {
+      name: 'Mario',
+      hobbies: [
+        {
+          name: 'reading',
+          test: [
+            {
+              Id: 2,
+              name: 'test',
+            },
+            {
+              Id: 6,
+              name: 'test',
+            },
+            {
+              Id: 11,
+              name: 'test',
+            },
+            {
+              Id: 44,
+              name: 'test',
+            },
+            {
+              Id: 13,
+              name: 'test',
+            },
+          ],
+        },
+        {
+          name: 'cooking',
+          secondTest: ['mario', 'Rossi'],
+        },
+      ],
+    };
+    const result = 1;
+
+    const objTest = new Flatten();
+    objTest.populate(obj);
+    expect(objTest.getIndexByProperty('hobbies.0.test', 'Id', 6)).toEqual(result);
+  });
+
+  it('Should return the empty repository', () => {
+    const obj = {};
+    const aspect = {};
+    let flatten = new Flatten();
+    flatten.populate([]);
+    expect(flatten.getCollection()).toEqual(aspect);
   });
 });

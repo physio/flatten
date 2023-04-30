@@ -1,87 +1,95 @@
-export class FlattenerClass {
-  /**
-   * Create a Flatten Class from obj input parameter
-   * @date 2023-03-10
-   * @param {Object} obj:Object - The input Object
-   * @param {string} prefix="" - Optional: use it if you want a prefix
-   * @returns {Object}
-   */
-  static flatten(obj: Object, prefix = '') {
-    const flattenedObject: any = {};
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        const value = obj[key];
-        const newKey = prefix ? `${prefix}.${key}` : key;
-        if (Array.isArray(value)) {
-          FlattenerClass.flattenArray(value, newKey, flattenedObject);
-        } else if (typeof value === 'object' && value !== null) {
-          Object.assign(flattenedObject, FlattenerClass.flatten(value, newKey));
-        } else {
-          flattenedObject[newKey] = value;
-        }
+import { BinarySearcherClass } from './BinarySearcher.class';
+import { BuilderClass } from './Builder.class';
+
+type ObjectWithNestedProperties = { [key: string]: any };
+
+export class Flatten {
+  private repository;
+
+  private filterObjectByKey(key: string, obj: ObjectWithNestedProperties): ObjectWithNestedProperties[] {
+    const result: ObjectWithNestedProperties[] = [];
+    for (const prop in obj) {
+      if (prop.endsWith(key) && typeof obj[prop] !== 'undefined') {
+        result.push({ [key]: obj[prop] });
       }
     }
-    return flattenedObject;
-  }
-
-  private static flattenArray(arr: any[], prefix: string, flattenedObject: any) {
-    if (arr.length > 0) {
-      if (arr[0].hasOwnProperty('Id') || arr[0].hasOwnProperty('id')) {
-        arr.sort(function (a, b) {
-          return a.hasOwnProperty('Id') ? a.Id - b.Id : a.id - b.id;
-        });
-      }
-    }
-    for (let i = 0; i < arr.length; i++) {
-      const value = arr[i];
-      const newKey = `${prefix}[${i}]`;
-      if (Array.isArray(value)) {
-        FlattenerClass.flattenArray(value, newKey, flattenedObject);
-      } else if (typeof value === 'object' && value !== null) {
-        Object.assign(flattenedObject, FlattenerClass.flatten(value, newKey));
-      } else {
-        flattenedObject[newKey] = value;
-      }
-    }
-  }
-
-  static unflatten(flattenedObj: Record<string, unknown>): Record<string, unknown> {
-    const result: Record<string, unknown> = {};
-
-    for (const key in flattenedObj) {
-      const keys = key.split('.');
-      let currentObj = result;
-      let arrayIndex;
-
-      for (let i = 0; i < keys.length; i++) {
-        const k = keys[i];
-
-        if (k.includes('[')) {
-          const match = k.match(/^(.*)\[(\d+)\]$/);
-          if (match) {
-            const arrayKey = match[1];
-            arrayIndex = Number(match[2]);
-            if (!currentObj[arrayKey]) {
-              currentObj[arrayKey] = [];
-            }
-            if (!currentObj[arrayKey][arrayIndex]) {
-              currentObj[arrayKey][arrayIndex] = {};
-            }
-            currentObj = currentObj[arrayKey][arrayIndex] as Record<string, unknown>;
-          }
-        } else {
-          if (i === keys.length - 1) {
-            currentObj[k] = flattenedObj[key];
-          } else {
-            if (!currentObj[k]) {
-              currentObj[k] = {};
-            }
-            currentObj = currentObj[k] as Record<string, unknown>;
-          }
-        }
-      }
-    }
-
     return result;
+  }
+
+  private getStringUntilIdKey(input: string, filter: string): string {
+    const idIndex = input.indexOf('.' + filter);
+    if (idIndex !== -1) {
+      return input.slice(0, idIndex);
+    }
+    return input;
+  }
+
+  private getPath(path: string): string {
+    if (path.includes('*')) {
+      const key = path.split('*.')[1].split('.')[0];
+      const id = path.split('*.')[1].split('.')[1];
+      const prefix = path.split('*')[0].replace(/\.$/, '');
+      let arr = this.filterObjectByKey(key, this.repository);
+      const index = BinarySearcherClass.searchBy(key, Number(id), arr);
+      let p = path.replace(/\*/g, index as unknown as string);
+      return this.getStringUntilIdKey(p, key);
+    }
+    return path;
+  }
+
+  /**
+   * Description: search property in the repository
+   * @param {any} path:string
+   * @returns {any}
+   */
+  getIndex(path: string): number {
+    if (path.includes('*')) {
+      const key = path.split('*.')[1].split('.')[0];
+      const id = path.split('*.')[1].split('.')[1];
+      let arr = this.filterObjectByKey(key, this.repository);
+      return BinarySearcherClass.searchBy(key, Number(id), arr);
+    }
+    return -1;
+  }
+
+  getIndexByProperty(path: string, key: string, value: any): number {
+    let arr = this.filterObjectByKey(key, this.repository);
+    return BinarySearcherClass.searchBy(key, value, arr);
+  }
+
+  /**
+   * Description: search property in the repository
+   * @param {any} path:string
+   * @returns {any}
+   */
+  public getValue(path: string): Object[] {
+    //path = this.getPath(path);
+    if (this.repository.hasOwnProperty(path)) {
+      return this.repository[path];
+    } else {
+      throw new Error('search term not found.');
+    }
+  }
+
+  /**
+   * Description: get the collection
+   * @param {any} collection:string
+   * @returns {any}
+   */
+  public getCollection() {
+    return this.repository;
+  }
+
+  /**
+   * Description: populate the repository
+   * @param {any} jsonData:any
+   * @returns {any}
+   */
+  populate(jsonData: Object): void {
+    try {
+      this.repository = BuilderClass.flatten(jsonData);
+    } catch (err) {
+      throw new Error('data not valid.');
+    }
   }
 }
