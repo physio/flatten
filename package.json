@@ -1,8 +1,8 @@
 {
-  "name": "flatten-ts",
+  "name": "flatten",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "main": "index.js",
   "dependencies": {},
   "devDependencies": {
     "jest": "^29.5.0",
@@ -23,7 +23,7 @@
   "author": "mauro.gallo@mentel.it",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/physio/flatten-ts/issues"
+    "url": "https://github.com/physio/flatten/issues"
   },
-  "homepage": "https://github.com/physio/flatten-ts#readme"
+  "homepage": "https://github.com/physio/flatten#readme"
 }

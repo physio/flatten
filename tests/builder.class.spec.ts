@@ -220,8 +220,14 @@ describe('BuilderClass', () => {
     };
     const expected = {
       users: [
-        { first: 'John', last: 'Doe' },
-        { first: 'Jane', last: 'Doe' },
+        {
+          first: 'John',
+          last: 'Doe',
+        },
+        {
+          first: 'Jane',
+          last: 'Doe',
+        },
       ],
     };
 

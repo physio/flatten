@@ -72,11 +72,98 @@ export class Flatten {
   }
 
   /**
-   * Description: get the collection
+   * Description: get the repository
    * @param {any} collection:string
    * @returns {any}
    */
   public getCollection() {
+    return this.repository;
+  }
+
+  /**
+   * Description: check if the path is valid in the repository
+   * @param {any} path:string
+   * @returns {any}
+   */
+  isValidPath(path: string): boolean {
+    const updatedPath = path.replace(/\*/g, '0');
+    return this.repository.hasOwnProperty(updatedPath);
+  }
+
+  private countOccurrences(str: string, char: string) {
+    let count = 0;
+    for (let i = 0; i < str.length; i++) {
+      if (str[i] === char) {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  /**
+   * Description: replace the asterisk with index
+   * @param {any} str:string
+   * @param {any} position:number
+   * @param {any} index:number
+   * @returns {any}
+   */
+  private replaceAtIndex(str: string, position: number, index: number): string {
+    if (index < 1) throw new Error('index must be greater than 0');
+    const asteriskIndex = str.indexOf('*');
+    if (asteriskIndex === -1) {
+      return str;
+    }
+    let count = 0;
+    let result = '';
+    for (let i = 0; i < str.length; i++) {
+      if (str[i] === '*') {
+        count++;
+        if (count === position) {
+          result += index.toString();
+          continue;
+        }
+      }
+      result += str[i];
+    }
+    return result;
+  }
+
+  private getLenghtOfAsterisk(path: string): number {
+    return 4;
+  }
+
+  public countKeys(stringWithAsterisks: string): number {
+    const regex = new RegExp('^' + stringWithAsterisks.replace(/\*/g, '\\d+') + '$');
+    const matchingKeys = Object.keys(this.repository).filter((key) => regex.test(key));
+    return matchingKeys.length;
+  }
+
+  public getMatchingKeys(stringWithAsterisks: string): string[] {
+    const regex = new RegExp('^' + stringWithAsterisks.replace(/\*/g, '\\d+') + '$');
+    const matchingKeys = Object.keys(this.repository).filter((key) => regex.test(key));
+    return matchingKeys;
+  }
+
+  /**
+   * Description: get all the properties with asterisk
+   *
+   * If pass a path like this: '0*.id' the method return an array with all the properties that match the path
+   *
+   * @param {any} path:string
+   * @returns {any}
+   */
+  getPropertiesWithAsterisk(path: string): string[] {
+    return this.getMatchingKeys(path);
+  }
+
+  public update(path: string, value: any): void {
+    const properties = this.getPropertiesWithAsterisk(path);
+    if (properties.length < 1) {
+      throw new Error('search term not found.');
+    }
+    properties.forEach((property) => {
+      this.repository[property] = value;
+    });
     return this.repository;
   }
 
@@ -91,5 +178,9 @@ export class Flatten {
     } catch (err) {
       throw new Error('data not valid.');
     }
+  }
+
+  unflatten(): Object {
+    return BuilderClass.unflatten(this.repository);
   }
 }

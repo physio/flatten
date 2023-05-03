@@ -1,6 +1,6 @@
 import { Flatten } from '../src/Flatten.class';
 
-describe('SearchClass', () => {
+describe('FlattenClass', () => {
   it('Should populate the repository', () => {
     const obj = {
       name: 'Mario',
@@ -252,11 +252,296 @@ describe('SearchClass', () => {
     expect(objTest.getIndexByProperty('hobbies.0.test', 'Id', 6)).toEqual(result);
   });
 
+  it('Should update multiple properties in the repository', () => {
+    const obj = {
+      students: [
+        {
+          name: 'Mario',
+          sport: 'football',
+        },
+        {
+          name: 'Paolo',
+          sport: 'football',
+        },
+        {
+          name: 'Giacomo',
+          sport: 'volley',
+        },
+        {
+          name: 'Mario',
+          sport: 'football',
+        },
+        {
+          name: 'Mario',
+          sport: 'football',
+        },
+      ],
+    };
+    const result = {
+      'students.0.name': 'Mario',
+      'students.0.sport': 'soccer',
+      'students.1.name': 'Paolo',
+      'students.1.sport': 'soccer',
+      'students.2.name': 'Giacomo',
+      'students.2.sport': 'soccer',
+      'students.3.name': 'Mario',
+      'students.3.sport': 'soccer',
+      'students.4.name': 'Mario',
+      'students.4.sport': 'soccer',
+    };
+    const objTest = new Flatten();
+    objTest.populate(obj);
+    objTest.update('students.*.sport', 'soccer');
+    expect(objTest.getCollection()).toEqual(result);
+  });
+
+  it('Should update one property in the repository', () => {
+    const obj = {
+      students: [
+        {
+          name: 'Mario',
+          sport: 'football',
+        },
+        {
+          name: 'Paolo',
+          sport: 'football',
+        },
+        {
+          name: 'Giacomo',
+          sport: 'volley',
+        },
+        {
+          name: 'Mario',
+          sport: 'football',
+        },
+        {
+          name: 'Mario',
+          sport: 'football',
+        },
+      ],
+    };
+    const result = {
+      'students.0.name': 'Mario',
+      'students.0.sport': 'football',
+      'students.1.name': 'Paolo',
+      'students.1.sport': 'football',
+      'students.2.name': 'Giacomo',
+      'students.2.sport': 'volley',
+      'students.3.name': 'Mario',
+      'students.3.sport': 'football',
+      'students.4.name': 'Mario',
+      'students.4.sport': 'swimming',
+    };
+    const objTest = new Flatten();
+    objTest.populate(obj);
+    objTest.update('students.4.sport', 'swimming');
+    expect(objTest.getCollection()).toEqual(result);
+  });
+
+  /*   it('Should Through because the path is invalid', () => {
+    const obj = {
+      rooms: [],
+      students: [
+        {
+          name: 'Mario',
+          sport: 'football',
+        },
+        {
+          name: 'Paolo',
+          sport: 'volley',
+        },
+        {
+          name: 'Giuseppe',
+          sport: 'football',
+        },
+        {
+          name: 'Marco',
+          sport: 'football',
+        },
+      ],
+    };
+    const result = {
+      'students.0.name': 'Mario',
+      'students.0.sport': 'soccer',
+      'students.1.name': 'Paolo',
+      'students.1.sport': 'volley',
+      'students.2.name': 'Giuseppe',
+      'students.2.sport': 'soccer',
+      'students.3.name': 'Marco',
+      'students.3.sport': 'soccer',
+    };
+
+    const objTest = new Flatten();
+    objTest.populate(obj);
+
+    objTest.update('students.*.sport', 'soccer');
+    expect(objTest.getCollection()).toEqual(result);
+  }); */
+
+  it('Should Through because the path is invalid', () => {
+    const obj = {
+      rooms: [],
+      students: [
+        {
+          name: 'Mario',
+          sport: 'football',
+        },
+        {
+          name: 'Paolo',
+          sport: 'volley',
+        },
+        {
+          name: 'Giuseppe',
+          sport: 'football',
+        },
+        {
+          name: 'Marco',
+          sport: 'football',
+        },
+      ],
+    };
+
+    const objTest = new Flatten();
+    objTest.populate(obj);
+
+    expect(() => {
+      objTest.update('test.1.sport', 'soccer');
+    }).toThrow('search term not found.');
+  });
+
   it('Should return the empty repository', () => {
     const obj = {};
     const aspect = {};
     let flatten = new Flatten();
     flatten.populate([]);
     expect(flatten.getCollection()).toEqual(aspect);
+  });
+
+  describe('getPropertiesWithAsterisk', () => {
+    let obj = {
+      students: [
+        {
+          name: 'Mario',
+          sport: 'football',
+          books: [
+            {
+              title: 'Harry Potter',
+            },
+          ],
+        },
+        {
+          name: 'Paolo',
+          sport: 'volley',
+          books: [
+            {
+              title: 'Harry Potter',
+            },
+            {
+              title: 'Lord of the rings',
+            },
+          ],
+        },
+        {
+          name: 'Luigi',
+          sport: 'swimming',
+        },
+        {
+          name: 'Claudio',
+          sport: 'volley',
+          books: [
+            {
+              title: 'Harry Potter',
+            },
+            {
+              title: 'Lord of the rings',
+            },
+          ],
+        },
+      ],
+    };
+    it('Should return the list with values', () => {
+      let flatten = new Flatten();
+      let aspect = ['students.0.books.0.title', 'students.1.books.0.title', 'students.1.books.1.title', 'students.3.books.0.title', 'students.3.books.1.title'];
+      flatten.populate(obj);
+      expect(flatten.getPropertiesWithAsterisk('students.*.books.*.title')).toEqual(aspect);
+    });
+
+    it('Should return the list with values', () => {
+      let flatten = new Flatten();
+      let aspect = ['students.0.name', 'students.1.name', 'students.2.name', 'students.3.name'];
+      flatten.populate(obj);
+      expect(flatten.getPropertiesWithAsterisk('students.*.name')).toEqual(aspect);
+    });
+  });
+
+  describe('replaceAtIndex', () => {
+    it('Should return correct string with *', () => {
+      let flatten = new Flatten();
+      expect(flatten['replaceAtIndex']('students.*.books.*.titles.*.italian', 1, 3)).toEqual('students.3.books.*.titles.*.italian');
+      expect(flatten['replaceAtIndex']('students.*.books.*.titles.*.italian', 2, 3)).toEqual('students.*.books.3.titles.*.italian');
+      expect(flatten['replaceAtIndex']('students.*.books.*.titles.*.italian', 3, 3)).toEqual('students.*.books.*.titles.3.italian');
+    });
+
+    it('Should return the input string with no *', () => {
+      let flatten = new Flatten();
+      expect(flatten['replaceAtIndex']('students.1.books.0.titles.2.italian', 1, 3)).toEqual('students.1.books.0.titles.2.italian');
+    });
+  });
+
+  describe('isValidPath', () => {
+    const obj = {
+      students: [
+        {
+          name: 'Mario',
+          sport: 'football',
+        },
+        {
+          name: 'Paolo',
+          sport: 'football',
+        },
+        {
+          name: 'Giacomo',
+          sport: 'volley',
+        },
+        {
+          name: 'Mario',
+          sport: 'football',
+        },
+        {
+          name: 'Mario',
+          sport: 'football',
+        },
+      ],
+    };
+
+    it('Should get true with a valid *', () => {
+      let flatten = new Flatten();
+      flatten.populate(obj);
+      expect(flatten.isValidPath('students.*.name')).toEqual(true);
+    });
+
+    it('Should get true with a valid index', () => {
+      let flatten = new Flatten();
+      flatten.populate(obj);
+      expect(flatten.isValidPath('students.3.name')).toEqual(true);
+    });
+
+    it('Should get false with a not valid index', () => {
+      let flatten = new Flatten();
+      flatten.populate(obj);
+      expect(flatten.isValidPath('students.223.name')).toEqual(false);
+    });
+
+    it('Should get false with a not valid property with *', () => {
+      let flatten = new Flatten();
+      flatten.populate(obj);
+      expect(flatten.isValidPath('students.*.age')).toEqual(false);
+    });
+
+    it('Should get false with a not valid property', () => {
+      let flatten = new Flatten();
+      flatten.populate(obj);
+      expect(flatten.isValidPath('students.2.age')).toEqual(false);
+    });
   });
 });
