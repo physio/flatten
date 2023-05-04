@@ -5,7 +5,8 @@
 **flatten-ts** is a lightweight TypeScript library for flattening arrays of any depth into a single-level array.
 
 Using the flatten method in general has several advantages, including:
-Usage
+Usage:
+
 1 - Reduced code complexity: **flatten** simplifies the process of manipulating arrays of arrays, reducing the need for writing complex code to perform this operation.
 
 2 - Improved code readability: Using **flatten** makes the code more readable, as it is easier to understand what the code is doing when using a standard method instead of writing custom code.
