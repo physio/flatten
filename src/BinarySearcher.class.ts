@@ -1,4 +1,11 @@
 export class BinarySearcherClass {
+  /**
+   * Description: search property in the repository
+   * @param {any} property:string
+   * @param {any} key:any
+   * @param {any} arr:Object[]
+   * @returns {any}
+   */
   public static searchBy(property: string, key: any, arr: Object[]) {
     let start = 0;
     let end = arr.length - 1;
