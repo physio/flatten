@@ -128,10 +128,6 @@ export class Flatten {
     return result;
   }
 
-  private getLenghtOfAsterisk(path: string): number {
-    return 4;
-  }
-
   public countKeys(stringWithAsterisks: string): number {
     const regex = new RegExp('^' + stringWithAsterisks.replace(/\*/g, '\\d+') + '$');
     const matchingKeys = Object.keys(this.repository).filter((key) => regex.test(key));
