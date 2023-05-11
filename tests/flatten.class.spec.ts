@@ -1,121 +1,123 @@
 import { Flatten } from '../src/Flatten.class';
 
 describe('FlattenClass', () => {
-  it('Should update multiple properties in the repository', () => {
-    const obj = {
-      students: [
-        {
-          name: 'Mario',
-          sport: 'football',
-        },
-        {
-          name: 'Paolo',
-          sport: 'football',
-        },
-        {
-          name: 'Giacomo',
-          sport: 'volley',
-        },
-        {
-          name: 'Mario',
-          sport: 'football',
-        },
-        {
-          name: 'Mario',
-          sport: 'football',
-        },
-      ],
-    };
-    const result = {
-      'students.0.name': 'Mario',
-      'students.0.sport': 'soccer',
-      'students.1.name': 'Paolo',
-      'students.1.sport': 'soccer',
-      'students.2.name': 'Giacomo',
-      'students.2.sport': 'soccer',
-      'students.3.name': 'Mario',
-      'students.3.sport': 'soccer',
-      'students.4.name': 'Mario',
-      'students.4.sport': 'soccer',
-    };
-    const objTest = new Flatten();
-    objTest.populate(obj);
-    objTest.update('students.*.sport', 'soccer');
-    expect(objTest.getCollection()).toEqual(result);
-  });
+  describe('update', () => {
+    it('Should update multiple properties in the repository', () => {
+      const obj = {
+        students: [
+          {
+            name: 'Mario',
+            sport: 'football',
+          },
+          {
+            name: 'Paolo',
+            sport: 'football',
+          },
+          {
+            name: 'Giacomo',
+            sport: 'volley',
+          },
+          {
+            name: 'Mario',
+            sport: 'football',
+          },
+          {
+            name: 'Mario',
+            sport: 'football',
+          },
+        ],
+      };
+      const result = {
+        'students.0.name': 'Mario',
+        'students.0.sport': 'soccer',
+        'students.1.name': 'Paolo',
+        'students.1.sport': 'soccer',
+        'students.2.name': 'Giacomo',
+        'students.2.sport': 'soccer',
+        'students.3.name': 'Mario',
+        'students.3.sport': 'soccer',
+        'students.4.name': 'Mario',
+        'students.4.sport': 'soccer',
+      };
+      const objTest = new Flatten();
+      objTest.populate(obj);
+      objTest.update('students.*.sport', 'soccer');
+      expect(objTest.getCollection()).toEqual(result);
+    });
 
-  it('Should update one property in the repository', () => {
-    const obj = {
-      students: [
-        {
-          name: 'Mario',
-          sport: 'football',
-        },
-        {
-          name: 'Paolo',
-          sport: 'football',
-        },
-        {
-          name: 'Giacomo',
-          sport: 'volley',
-        },
-        {
-          name: 'Mario',
-          sport: 'football',
-        },
-        {
-          name: 'Mario',
-          sport: 'football',
-        },
-      ],
-    };
-    const result = {
-      'students.0.name': 'Mario',
-      'students.0.sport': 'football',
-      'students.1.name': 'Paolo',
-      'students.1.sport': 'football',
-      'students.2.name': 'Giacomo',
-      'students.2.sport': 'volley',
-      'students.3.name': 'Mario',
-      'students.3.sport': 'football',
-      'students.4.name': 'Mario',
-      'students.4.sport': 'swimming',
-    };
-    const objTest = new Flatten();
-    objTest.populate(obj);
-    objTest.update('students.4.sport', 'swimming');
-    expect(objTest.getCollection()).toEqual(result);
-  });
+    it('Should update one property in the repository', () => {
+      const obj = {
+        students: [
+          {
+            name: 'Mario',
+            sport: 'football',
+          },
+          {
+            name: 'Paolo',
+            sport: 'football',
+          },
+          {
+            name: 'Giacomo',
+            sport: 'volley',
+          },
+          {
+            name: 'Mario',
+            sport: 'football',
+          },
+          {
+            name: 'Mario',
+            sport: 'football',
+          },
+        ],
+      };
+      const result = {
+        'students.0.name': 'Mario',
+        'students.0.sport': 'football',
+        'students.1.name': 'Paolo',
+        'students.1.sport': 'football',
+        'students.2.name': 'Giacomo',
+        'students.2.sport': 'volley',
+        'students.3.name': 'Mario',
+        'students.3.sport': 'football',
+        'students.4.name': 'Mario',
+        'students.4.sport': 'swimming',
+      };
+      const objTest = new Flatten();
+      objTest.populate(obj);
+      objTest.update('students.4.sport', 'swimming');
+      expect(objTest.getCollection()).toEqual(result);
+    });
 
-  it('Not update, should Through because the path is invalid', () => {
-    const obj = {
-      rooms: [],
-      students: [
-        {
-          name: 'Mario',
-          sport: 'football',
-        },
-        {
-          name: 'Paolo',
-          sport: 'volley',
-        },
-        {
-          name: 'Giuseppe',
-          sport: 'football',
-        },
-        {
-          name: 'Marco',
-          sport: 'football',
-        },
-      ],
-    };
+    it('Not update, should Through because the path is invalid', () => {
+      const obj = {
+        rooms: [],
+        students: [
+          {
+            name: 'Mario',
+            sport: 'football',
+          },
+          {
+            name: 'Paolo',
+            sport: 'volley',
+          },
+          {
+            name: 'Giuseppe',
+            sport: 'football',
+          },
+          {
+            name: 'Marco',
+            sport: 'football',
+          },
+        ],
+      };
 
-    const objTest = new Flatten();
-    objTest.populate(obj);
+      const objTest = new Flatten();
+      objTest.populate(obj);
 
-    expect(() => {
-      objTest.update('test.1.sport', 'soccer');
-    }).toThrow('search term not found.');
+      expect(() => {
+        objTest.update('test.1.sport', 'soccer');
+      }).toThrow('search term not found.');
+    });
   });
 
   describe('delete', () => {
@@ -162,10 +164,14 @@ describe('FlattenClass', () => {
       let flatten = new Flatten();
       flatten.populate(obj);
       const result = {
+        'students.0.name': 'Mario',
         'students.0.sport': 'football',
         'students.1.sport': 'football',
+        'students.2.name': 'Giacomo',
         'students.2.sport': 'volley',
+        'students.3.name': 'Mario',
         'students.3.sport': 'football',
+        'students.4.name': 'Mario',
         'students.4.sport': 'football',
       };
 
@@ -220,10 +226,10 @@ describe('FlattenClass', () => {
         'students.4.age': 30,
       };
 
-      expect(flatten.add('students.*.age', 30)).toEqual(result);
+      expect(flatten.add('students.*', 30, 'age')).toEqual(result);
     });
 
-    it('Should add a object', () => {
+    it('Should add a object to array', () => {
       let flatten = new Flatten();
       flatten.populate(obj);
       const result = {
@@ -242,6 +248,42 @@ describe('FlattenClass', () => {
       };
 
       expect(flatten.add('students', { name: 'Franco', sport: 'swimming' })).toEqual(result);
+    });
+
+    it('Should add a string to array', () => {
+      let obj = {
+        students: ['mario', 'paolo', 'giacomo'],
+      };
+      let flatten = new Flatten();
+      flatten.populate(obj);
+      const result = {
+        'students.0': 'mario',
+        'students.1': 'paolo',
+        'students.2': 'giacomo',
+        'students.3': 'franco',
+      };
+
+      expect(flatten.add('students', 'franco')).toEqual(result);
+    });
+
+    it('Should add a property to object', () => {
+      let flatten = new Flatten();
+      flatten.populate(obj);
+      const result = {
+        'students.0.name': 'Mario',
+        'students.0.sport': 'football',
+        'students.1.name': 'Paolo',
+        'students.1.sport': 'football',
+        'students.2.name': 'Giacomo',
+        'students.2.sport': 'volley',
+        'students.2.age': 30,
+        'students.3.name': 'Mario',
+        'students.3.sport': 'football',
+        'students.4.name': 'Mario',
+        'students.4.sport': 'football',
+      };
+
+      expect(flatten.add('students.2', 30, 'age')).toEqual(result);
     });
   });
 });

@@ -2,6 +2,24 @@
 
 # Flatten-ts Documentation
 
+## Summary
+
+- [Introduction](#introduction)
+- [Installation](#installation)
+- [Usage](#usage)
+
+  - [External Json](#use-external-json)
+
+- Features
+
+  - [Add](#contributing)
+  - [Update](#update-a-property)
+  - [Delete](#contributing)
+
+- [License](#license)
+
+## Introduction
+
 **flatten-ts** is a lightweight TypeScript library for flattening arrays of any depth into a single-level array.
 
 Using the flatten method in general has several advantages, including:
@@ -74,6 +92,20 @@ console.log(flatten.getCollection());
 }
 
 */
+```
+
+### Use external Json
+
+You can import a JSON file into TypeScript using the import statement and specifying the file path of the JSON file. The imported JSON object can then be assigned to a variable or used directly in your code.
+
+```js
+import { flatten } from 'flatten-ts';
+
+// optional: you can import a json from external source
+import extJson from '../output.json';
+
+const flatObj = new Flatten();
+flatObj.populate(extJson);
 ```
 
 As you can see in the example above, when `flatten` encounters an array, it inserts the numeric index to identify the object within the array.
@@ -174,23 +206,7 @@ flatten.update('students.*.dueDate', '2024-01-01');
 
 You can use multiple '\*' int the path.
 
-### Use external Json
-
-You can import a JSON file into TypeScript using the import statement and specifying the file path of the JSON file. The imported JSON object can then be assigned to a variable or used directly in your code.
-
-```js
-import { flatten } from 'flatten-ts';
-
-// optional: you can import a json from external source
-import extJson from '../output.json';
-
-const flatObj = new Flatten();
-flatObj.populate(extJson);
-```
-
 Then, you can use the flatten function to flatten any array of any depth into a single-level array:
-
-TODO: complete docs
 
 ## Contributing
 

@@ -2,6 +2,18 @@ import { FlattenBaseClass } from '../src/FlattenBase.class';
 import { FlattenToolsClass } from '../src/FlattenTools.class';
 
 describe('FlattenToolsClass', () => {
+  it('Should return the path without last key', () => {
+    const objTest = new FlattenToolsClass();
+    expect(objTest.removeLastKeyFromPath('hobbies.0.test.*.Id.6')).toEqual('hobbies.0.test.*.Id');
+    expect(objTest.removeLastKeyFromPath('hobbies.0.test')).toEqual('hobbies.0');
+    expect(objTest.removeLastKeyFromPath('hobbies.0.test')).toEqual('hobbies.0');
+  });
+
+  it('Should return the path with the only one key', () => {
+    const objTest = new FlattenToolsClass();
+    expect(objTest.removeLastKeyFromPath('hobbies')).toEqual('hobbies');
+  });
+
   it('Should return the index filtered with a * char with a numeric Id', () => {
     const obj = {
       name: 'Mario',
@@ -195,60 +207,121 @@ describe('FlattenToolsClass', () => {
     expect(flatten.replaceAtIndex('students.1.books.0.titles.2.italian', 1, 3)).toEqual('students.1.books.0.titles.2.italian');
   });
 
-  describe('isValidPath', () => {
+  describe('isValidProperty', () => {
     const obj = {
-      students: [
-        {
-          name: 'Mario',
-          sport: 'football',
-        },
-        {
-          name: 'Paolo',
-          sport: 'football',
-        },
-        {
-          name: 'Giacomo',
-          sport: 'volley',
-        },
-        {
-          name: 'Mario',
-          sport: 'football',
-        },
-        {
-          name: 'Mario',
-          sport: 'football',
-        },
-      ],
+      ['students.0.name']: 'Mario',
+      ['students.0.sport']: 'football',
+      ['students.0.hobbies.0']: 'reading',
+      ['students.0.hobbies.1']: 'watching TV',
+      ['students.1.name']: 'Paolo',
+      ['students.1.sport']: 'football',
     };
+    it('Should return false with a empty repository', () => {
+      const flatten = new FlattenToolsClass();
+      expect(flatten.isValidProperty('students.*.name')).toEqual(false);
+    });
+    it('Should return false with a asterisk property', () => {
+      const flatten = new FlattenToolsClass();
+      flatten.populate(obj);
+      expect(flatten.isValidProperty('students.*.name')).toEqual(false);
+    });
+
+    it('Should return true with a existent property', () => {
+      const flatten = new FlattenToolsClass();
+      flatten.populate(obj);
+      expect(flatten.isValidProperty('students.1.name')).toEqual(true);
+    });
+  });
+
+  describe('isValidPath', () => {
+    it('Should return true with a array and one property', () => {
+      const flatten = new FlattenToolsClass();
+      expect(flatten.isValidPath('students.*.name')).toEqual(true);
+    });
+
+    it('Should return false with an array at start', () => {
+      const flatten = new FlattenToolsClass();
+      expect(flatten.isValidPath('students')).toEqual(true);
+    });
+
+    it('Should return false with a not valid end', () => {
+      const flatten = new FlattenToolsClass();
+      expect(flatten.isValidPath('students.*.boys.*')).toEqual(false);
+    });
 
     it('Should get true with a valid *', () => {
       let flatten = new FlattenToolsClass();
-      flatten.populate(obj);
       expect(flatten.isValidPath('students.*.name')).toEqual(true);
     });
 
     it('Should get true with a valid index', () => {
       let flatten = new FlattenToolsClass();
-      flatten.populate(obj);
       expect(flatten.isValidPath('students.3.name')).toEqual(true);
     });
 
-    it('Should get false with a not valid index', () => {
+    it('Should get true with a valid index', () => {
       let flatten = new FlattenToolsClass();
-      flatten.populate(obj);
-      expect(flatten.isValidPath('students.223.name')).toEqual(false);
+      expect(flatten.isValidPath('students.223.name')).toEqual(true);
     });
 
-    it('Should get false with a not valid property with *', () => {
+    it('Should get true with a valid property with *', () => {
       let flatten = new FlattenToolsClass();
-      flatten.populate(obj);
-      expect(flatten.isValidPath('students.*.age')).toEqual(false);
+      expect(flatten.isValidPath('tools.*.keys.*.professional')).toEqual(true);
     });
 
-    it('Should get false with a not valid property', () => {
+    it('Should get true with not valid property with *', () => {
       let flatten = new FlattenToolsClass();
-      flatten.populate(obj);
-      expect(flatten.isValidPath('students.2.age')).toEqual(false);
+      expect(flatten.isValidPath('students.*.age')).toEqual(true);
+    });
+
+    it('Should get true with a valid property', () => {
+      let flatten = new FlattenToolsClass();
+      expect(flatten.isValidPath('students.2.age')).toEqual(true);
+    });
+
+    it('Should get false with an with dot final', () => {
+      let flatten = new FlattenToolsClass();
+      expect(flatten.isValidPath('students.')).toEqual(false);
+    });
+
+    it('Should get false with a malformed path', () => {
+      let flatten = new FlattenToolsClass();
+      expect(flatten.isValidPath('students[2]')).toEqual(false);
+    });
+
+    it('Should get false with a malformed path', () => {
+      let flatten = new FlattenToolsClass();
+      expect(flatten.isValidPath('students.2((')).toEqual(false);
+    });
+
+    it('Should get false with a malformed path', () => {
+      let flatten = new FlattenToolsClass();
+      expect(flatten.isValidPath('students..2')).toEqual(false);
+    });
+
+    it('Should get false with a malformed path', () => {
+      let flatten = new FlattenToolsClass();
+      expect(flatten.isValidPath('students**')).toEqual(false);
+    });
+
+    it('Should get false with a malformed path', () => {
+      let flatten = new FlattenToolsClass();
+      expect(flatten.isValidPath('students.**.2')).toEqual(false);
+    });
+
+    it('Should get false with a malformed path', () => {
+      let flatten = new FlattenToolsClass();
+      expect(flatten.isValidPath('students.*')).toEqual(false);
+    });
+
+    it('Should get false with a malformed path', () => {
+      let flatten = new FlattenToolsClass();
+      expect(flatten.isValidPath('*.students')).toEqual(false);
+    });
+
+    it('Should get false with a malformed path', () => {
+      let flatten = new FlattenToolsClass();
+      expect(flatten.isValidPath('.students.*')).toEqual(false);
     });
   });
 

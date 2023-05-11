@@ -1,7 +1,7 @@
 import { BuilderClass } from './Builder.class';
 
 export class FlattenBaseClass {
-  protected repository;
+  protected repository = {};
 
   /**
    * Description: populate the repository
