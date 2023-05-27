@@ -2,6 +2,101 @@ import { FlattenBaseClass } from './FlattenBase.class';
 import { FlattenToolsClass } from './FlattenTools.class';
 
 export class Flatten extends FlattenToolsClass {
+
+
+  public firstIndex(key: string, value: string): number {
+    const pattern = key.replace('*', '\\d+');
+    const regex = new RegExp(`^${pattern}$`);
+
+    for (const prop in this.repository) {
+      if (regex.test(prop) && this.repository[prop] === value) {
+        const indexMatch = prop.match(/\d+/);
+        if (indexMatch) {
+          return Number(indexMatch[0]);
+        }
+      }
+    }
+
+    return -1;
+  }
+
+  public allIndexes(key: string, value: string): number[] {
+    const pattern = key.replace('*', '\\d+');
+    const regex = new RegExp(`^${pattern}$`);
+
+    const matches: number[] = [];
+
+    for (const prop in this.repository) {
+      if (regex.test(prop) && this.repository[prop] === value) {
+        const indexMatch = prop.match(/\d+/);
+        if (indexMatch) {
+          matches.push(Number(indexMatch[0]));
+        }
+      }
+    }
+
+    return matches;
+  }
+
+
+  public propertyByValue(path: string, value: string, property: string): number | string | boolean {
+    if (!path.includes('*')) {
+      throw new Error("Char * no present in path");
+    }
+    if (path[path.length - 1] == '.') {
+      throw new Error("No valid path");
+    }
+
+    const segments = path.split('.');
+    const wildcardIndex = segments.findIndex((segment) => segment === '*');
+
+    if (wildcardIndex === -1) {
+      throw new Error("Char '*' no present in 'path'");
+    }
+
+    const objLenght = Object.keys(this.repository).length;
+
+    for (let index = 0; index < objLenght; index++) {
+      const key = path.replace('*', index.toString());
+      if (this.repository[key] == value) {
+        let newProperty = this.replaceProperty(key, property);
+        return this.repository[newProperty];
+      }
+    }
+
+    throw new Error("No value found");
+  }
+
+
+  public propertiesByValue(path: string, value: string, property: string): number[] | string[] | boolean[] {
+    if (!path.includes('*')) {
+      throw new Error("Char * no present in path");
+    }
+    if (path[path.length - 1] == '.') {
+      throw new Error("No valid path");
+    }
+
+    let results = [];
+    const segments = path.split('.');
+    const wildcardIndex = segments.findIndex((segment) => segment === '*');
+
+    if (wildcardIndex === -1) {
+      throw new Error("Char '*' no present in 'path'");
+    }
+
+    const objLenght = Object.keys(this.repository).length;
+
+    for (let index = 0; index < objLenght; index++) {
+      const key = path.replace('*', index.toString());
+      if (this.repository[key] == value) {
+        let newProperty = this.replaceProperty(key, property);
+        results.push(this.repository[newProperty]);
+      }
+    }
+    return results;
+  }
+
+
   /**
    * Description: update the repository
    * @param {any} path:string

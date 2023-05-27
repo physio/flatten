@@ -3,6 +3,17 @@ import { BinarySearcherClass } from './BinarySearcher.class';
 type ObjectWithNestedProperties = { [key: string]: any };
 
 export class FlattenToolsClass extends FlattenBaseClass {
+
+  protected replaceProperty(path: string, property: string): string {
+    const lastDotIndex = path.lastIndexOf('.');
+
+    if (lastDotIndex === -1) {
+      throw new Error("Path not valid");
+    }
+
+    return path.substring(0, lastDotIndex + 1) + property;
+  }
+
   /**
    * Description: search property in the repository
    * @param {any} path:string
@@ -55,34 +66,6 @@ export class FlattenToolsClass extends FlattenBaseClass {
     }
     const regex = /^[a-zA-Z0-9]+(\.[a-zA-Z0-9]+|\.[a-zA-Z0-9]+(\.[a-zA-Z0-9]+|\.\*)|\.\*)*$/;
     return regex.test(path) && !path.endsWith('.');
-  }
-
-  /**
-   * Description: replace the asterisk with index
-   * @param {any} str:string
-   * @param {any} position:number
-   * @param {any} index:number
-   * @returns {any}
-   */
-  replaceAtIndex(str: string, position: number, index: number): string {
-    if (index < 1) throw new Error('index must be greater than 0');
-    const asteriskIndex = str.indexOf('*');
-    if (asteriskIndex === -1) {
-      return str;
-    }
-    let count = 0;
-    let result = '';
-    for (let i = 0; i < str.length; i++) {
-      if (str[i] === '*') {
-        count++;
-        if (count === position) {
-          result += index.toString();
-          continue;
-        }
-      }
-      result += str[i];
-    }
-    return result;
   }
 
   /**

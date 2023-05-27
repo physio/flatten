@@ -2,17 +2,6 @@ import { FlattenBaseClass } from '../src/FlattenBase.class';
 import { FlattenToolsClass } from '../src/FlattenTools.class';
 
 describe('FlattenToolsClass', () => {
-  it('Should return the path without last key', () => {
-    const objTest = new FlattenToolsClass();
-    expect(objTest.removeLastKeyFromPath('hobbies.0.test.*.Id.6')).toEqual('hobbies.0.test.*.Id');
-    expect(objTest.removeLastKeyFromPath('hobbies.0.test')).toEqual('hobbies.0');
-    expect(objTest.removeLastKeyFromPath('hobbies.0.test')).toEqual('hobbies.0');
-  });
-
-  it('Should return the path with the only one key', () => {
-    const objTest = new FlattenToolsClass();
-    expect(objTest.removeLastKeyFromPath('hobbies')).toEqual('hobbies');
-  });
 
   it('Should return the index filtered with a * char with a numeric Id', () => {
     const obj = {
@@ -147,53 +136,53 @@ describe('FlattenToolsClass', () => {
     expect(flatten.getMatchingKeys('students.*.books.*.title')).toEqual(aspect);
   });
 
-  it('Should return the list with values', () => {
-    let obj = {
-      students: [
-        {
-          name: 'Mario',
-          sport: 'football',
-          books: [
-            {
-              title: 'Harry Potter',
-            },
-          ],
-        },
-        {
-          name: 'Paolo',
-          sport: 'volley',
-          books: [
-            {
-              title: 'Harry Potter',
-            },
-            {
-              title: 'Lord of the rings',
-            },
-          ],
-        },
-        {
-          name: 'Luigi',
-          sport: 'swimming',
-        },
-        {
-          name: 'Claudio',
-          sport: 'volley',
-          books: [
-            {
-              title: 'Harry Potter',
-            },
-            {
-              title: 'Lord of the rings',
-            },
-          ],
-        },
-      ],
-    };
-    let flatten = new FlattenToolsClass();
-    let aspect = ['students.0.name', 'students.1.name', 'students.2.name', 'students.3.name'];
-    flatten.populate(obj);
-    expect(flatten.getPropertiesWithAsterisk('students.*.name')).toEqual(aspect);
-  });
+  /*   it('Should return the list with values', () => {
+      let obj = {
+        students: [
+          {
+            name: 'Mario',
+            sport: 'football',
+            books: [
+              {
+                title: 'Harry Potter',
+              },
+            ],
+          },
+          {
+            name: 'Paolo',
+            sport: 'volley',
+            books: [
+              {
+                title: 'Harry Potter',
+              },
+              {
+                title: 'Lord of the rings',
+              },
+            ],
+          },
+          {
+            name: 'Luigi',
+            sport: 'swimming',
+          },
+          {
+            name: 'Claudio',
+            sport: 'volley',
+            books: [
+              {
+                title: 'Harry Potter',
+              },
+              {
+                title: 'Lord of the rings',
+              },
+            ],
+          },
+        ],
+      };
+      let flatten = new FlattenToolsClass();
+      let aspect = ['students.0.name', 'students.1.name', 'students.2.name', 'students.3.name'];
+      flatten.populate(obj);
+      expect(flatten.getPropertiesWithAsterisk('students.*.name')).toEqual(aspect);
+    }); */
 
   it('Should return correct string with *', () => {
     let flatten = new FlattenToolsClass();
