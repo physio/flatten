@@ -77,7 +77,7 @@ export class Flatten extends FlattenToolsClass {
       throw new Error("No valid path");
     }
 
-    let results = [];
+    let results: any = [];
     const segments = path.split('.');
     const wildcardIndex = segments.findIndex((segment) => segment === '*');
 

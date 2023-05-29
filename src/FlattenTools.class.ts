@@ -116,7 +116,7 @@ export class FlattenToolsClass extends FlattenBaseClass {
     let maxNumber = 0;
     for (const key in this.repository) {
       if (regex.test(key)) {
-        const [, number] = regex.exec(key);
+        const [, number] = regex.exec(key) || [];
         maxNumber = Math.max(maxNumber, Number(number));
       }
     }
