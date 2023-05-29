@@ -4,6 +4,12 @@ type ObjectWithNestedProperties = { [key: string]: any };
 
 export class FlattenToolsClass extends FlattenBaseClass {
 
+  /**
+   * Replace property
+   * @param {any} path:string
+   * @param {any} property:string
+   * @returns {any}
+   */
   protected replaceProperty(path: string, property: string): string {
     const lastDotIndex = path.lastIndexOf('.');
 
@@ -81,6 +87,12 @@ export class FlattenToolsClass extends FlattenBaseClass {
     return matchingKeys;
   }
 
+  /**
+   * Check if property exist
+   * 
+   * @param {any} key:string
+   * @returns {any}
+   */
   protected hasPropertyStartingWithPathAndDot(key: string): boolean {
     for (const prop in this.repository) {
       if (prop.startsWith(key + '.')) {
@@ -111,10 +123,38 @@ export class FlattenToolsClass extends FlattenBaseClass {
     return maxNumber + 1;
   }
 
-  protected isAnArrray(path: string): boolean {
+  protected isAnArray(path: string): boolean {
     for (const prop in this.repository) {
       if (prop.startsWith(path.concat('.0'))) return true;
     }
     return false;
+  }
+
+  /**
+   * Description: replace the asterisk with index
+   * @param {any} str:string
+   * @param {any} position:number
+   * @param {any} index:number
+   * @returns {any}
+   */
+  protected replaceAtIndex(str: string, position: number, index: number): string {
+    if (index < 1) throw new Error('index must be greater than 0');
+    const asteriskIndex = str.indexOf('*');
+    if (asteriskIndex === -1) {
+      return str;
+    }
+    let count = 0;
+    let result = '';
+    for (let i = 0; i < str.length; i++) {
+      if (str[i] === '*') {
+        count++;
+        if (count === position) {
+          result += index.toString();
+          continue;
+        }
+      }
+      result += str[i];
+    }
+    return result;
   }
 }

@@ -186,14 +186,14 @@ describe('FlattenToolsClass', () => {
 
   it('Should return correct string with *', () => {
     let flatten = new FlattenToolsClass();
-    expect(flatten.replaceAtIndex('students.*.books.*.titles.*.italian', 1, 3)).toEqual('students.3.books.*.titles.*.italian');
-    expect(flatten.replaceAtIndex('students.*.books.*.titles.*.italian', 2, 3)).toEqual('students.*.books.3.titles.*.italian');
-    expect(flatten.replaceAtIndex('students.*.books.*.titles.*.italian', 3, 3)).toEqual('students.*.books.*.titles.3.italian');
+    expect(flatten['replaceAtIndex']('students.*.books.*.titles.*.italian', 1, 3)).toEqual('students.3.books.*.titles.*.italian');
+    expect(flatten['replaceAtIndex']('students.*.books.*.titles.*.italian', 2, 3)).toEqual('students.*.books.3.titles.*.italian');
+    expect(flatten['replaceAtIndex']('students.*.books.*.titles.*.italian', 3, 3)).toEqual('students.*.books.*.titles.3.italian');
   });
 
   it('Should return the input string with no *', () => {
     let flatten = new FlattenToolsClass();
-    expect(flatten.replaceAtIndex('students.1.books.0.titles.2.italian', 1, 3)).toEqual('students.1.books.0.titles.2.italian');
+    expect(flatten['replaceAtIndex']('students.1.books.0.titles.2.italian', 1, 3)).toEqual('students.1.books.0.titles.2.italian');
   });
 
   describe('isValidProperty', () => {

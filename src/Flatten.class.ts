@@ -4,6 +4,7 @@ import { FlattenToolsClass } from './FlattenTools.class';
 export class Flatten extends FlattenToolsClass {
 
 
+
   public firstIndex(key: string, value: string): number {
     const pattern = key.replace('*', '\\d+');
     const regex = new RegExp(`^${pattern}$`);
@@ -131,17 +132,18 @@ export class Flatten extends FlattenToolsClass {
     return this.repository;
   }
 
-  /*
 
-condizioni possibili:
-1) path valido ()
-
-*/
-
+  /**
+   * Add property to the Flatten object
+   * @param {any} path:string
+   * @param {any} value:boolean|number|string|object
+   * @param {any} key:string=''
+   * @returns {any}
+   */
   add(path: string, value: boolean | number | string | object, key: string = ''): object {
     if (this.isValidPath(path)) {
       if (this.hasPropertyStartingWithPathWithoutDot(path)) {
-        if (this.isAnArrray(path)) {
+        if (this.isAnArray(path)) {
           // this is the case that add a property to an array
           const maxNumber = this.getMaxNumber(path);
           if (typeof value !== 'object') {
@@ -157,16 +159,6 @@ condizioni possibili:
             let ele = fbc.populate(value);
           }
         }
-
-        // this is the case that add a property to an array
-        /*         let properties = this.filterObjectByKey(path, this.repository);
-         for (let i = 0; i < properties.length; i++) {
-          const property = properties[i];
-
-          const newProperty = property.concat('.').concat(maxNumber.toString());
-          this.repository[newProperty] = value;
-          return this.repository;
-        }  */
       }
       if (this.hasPropertyStartingWithPathAndDot(path)) {
         // this is the case that add a property to an existing property
